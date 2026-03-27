@@ -1,0 +1,20 @@
+.filtro-mes {
+  display: flex;
+  gap: 8px;
+}
+
+.filtro-mes select {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filtro-mes select:focus {
+  border-color: var(--accent);
+}
