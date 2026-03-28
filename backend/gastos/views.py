@@ -5,8 +5,8 @@ from django.db.models import Sum, Count, Q
 from django.utils import timezone
 import datetime
 
-from .models import Despesa
-from .serializers import DespesaSerializer
+from .models import Despesa, Receita
+from .serializers import DespesaSerializer, ReceitaSerializer
 
 
 class DespesaViewSet(viewsets.ModelViewSet):
@@ -80,30 +80,36 @@ class DespesaViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='indicadores')
     def indicadores(self, request):
-        """
-        Retorna os indicadores de gastos totais separados por status.
-        Aceita filtros de mês/ano para o período desejado.
-        """
         queryset = self.get_queryset()
 
-        total_geral = queryset.aggregate(
-            total=Sum('valor'),
-            quantidade=Count('id')
-        )
+        mes = request.query_params.get('mes')
+        ano = request.query_params.get('ano')
+        receitas_qs = Receita.objects.all()
+        if mes and ano:
+            receitas_qs = receitas_qs.filter(
+                data_recebimento__month=int(mes),
+                data_recebimento__year=int(ano)
+            )
+        elif mes:
+            from django.utils import timezone
+            receitas_qs = receitas_qs.filter(
+                data_recebimento__month=int(mes),
+                data_recebimento__year=timezone.now().year
+            )
+        elif ano:
+            receitas_qs = receitas_qs.filter(data_recebimento__year=int(ano))
 
-        em_aberto = queryset.filter(status='em_aberto').aggregate(
-            total=Sum('valor'),
-            quantidade=Count('id')
-        )
+        total_geral = queryset.aggregate(total=Sum('valor'), quantidade=Count('id'))
+        em_aberto   = queryset.filter(status='em_aberto').aggregate(total=Sum('valor'), quantidade=Count('id'))
+        pagos       = queryset.filter(status='pago').aggregate(total=Sum('valor'), quantidade=Count('id'))
+        receitas    = receitas_qs.aggregate(total=Sum('valor'), quantidade=Count('id'))
 
-        pagos = queryset.filter(status='pago').aggregate(
-            total=Sum('valor'),
-            quantidade=Count('id')
-        )
+        total_despesas = total_geral['total'] or 0
+        total_receitas = receitas['total'] or 0
 
         return Response({
             'total_geral': {
-                'valor': total_geral['total'] or 0,
+                'valor': total_despesas,
                 'quantidade': total_geral['quantidade']
             },
             'em_aberto': {
@@ -113,5 +119,32 @@ class DespesaViewSet(viewsets.ModelViewSet):
             'pagos': {
                 'valor': pagos['total'] or 0,
                 'quantidade': pagos['quantidade']
-            }
+            },
+            'receitas': {
+                'valor': total_receitas,
+                'quantidade': receitas['quantidade']
+            },
+            'saldo': float(total_receitas) - float(total_despesas)
         })
+
+class ReceitaViewSet(viewsets.ModelViewSet):
+
+    serializer_class = ReceitaSerializer
+
+    def get_queryset(self):
+        queryset = Receita.objects.all()
+        mes = self.request.query_params.get('mes')
+        ano = self.request.query_params.get('ano')
+        if mes and ano:
+            queryset = queryset.filter(
+                data_recebimento__month=int(mes),
+                data_recebimento__year=int(ano)
+            )
+        elif mes:
+            queryset = queryset.filter(
+                data_recebimento__month=int(mes),
+                data_recebimento__year=timezone.now().year
+            )
+        elif ano:
+            queryset = queryset.filter(data_recebimento__year=int(ano))
+        return queryset

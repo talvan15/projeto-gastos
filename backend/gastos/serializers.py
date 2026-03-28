@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Despesa
+from .models import Despesa, Receita
 
 
 class DespesaSerializer(serializers.ModelSerializer):
@@ -22,3 +22,13 @@ class DespesaSerializer(serializers.ModelSerializer):
                 "Despesas pagas não podem ser editadas."
             )
         return value
+
+class ReceitaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Receita
+
+        fields = [
+            'id', 'descricao', 'valor', 'categoria',
+            'data_recebimento', 'criado_em', 'atualizado_em'
+        ]
+        read_only_fields = ['id', 'criado_em', 'atualizado_em']
