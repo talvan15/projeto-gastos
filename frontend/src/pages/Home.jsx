@@ -59,7 +59,7 @@ export default function Home() {
           <p className="home-sub">Gerencie suas despesas fixas e variáveis</p>
         </div>
         <button className="btn-novo" onClick={() => setModalAberto(true)}>
-          <span>+</span> Nova Despesa
+          <span>+</span> Novo Lançamento
         </button>
       </header>
 
@@ -81,12 +81,6 @@ export default function Home() {
           ))
         }
       </section>
-
-      {/* ── Dica ── */}
-      <div className="home-dica">
-        <span>💡</span>
-        <p>Clique em um indicador para ver as despesas daquele grupo. Use <strong>Nova Despesa</strong> para adicionar registros.</p>
-      </div>
 
       {modalAberto && (
         <Modal

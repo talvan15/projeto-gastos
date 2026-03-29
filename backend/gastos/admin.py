@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Despesa
+from .models import Lancamento
 
 
-@admin.register(Despesa)
-class DespesaAdmin(admin.ModelAdmin):
-    list_display = ['descricao', 'valor', 'tipo', 'status', 'data_vencimento', 'criado_em']
-    list_filter = ['status', 'tipo', 'data_vencimento']
+@admin.register(Lancamento)
+class LancamentoAdmin(admin.ModelAdmin):
+    list_display = ['descricao', 'valor', 'tipo', 'status', 'data_lancamento', 'criado_em']
+    list_filter = ['status', 'tipo', 'data_lancamento']
     search_fields = ['descricao', 'categoria']
-    ordering = ['-criado_em']
+    ordering = ['-data_lancamento']

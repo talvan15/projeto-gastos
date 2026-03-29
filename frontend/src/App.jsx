@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import ListaDespesas from './pages/ListaDespesas';
+import ListaLancamentos from './pages/ListaLancamentos';
 import './index.css';
 
 export default function App() {
@@ -8,7 +8,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/despesas" element={<ListaDespesas />} />
+        <Route path="/despesas" element={<ListaLancamentos />} />
       </Routes>
     </BrowserRouter>
   );
