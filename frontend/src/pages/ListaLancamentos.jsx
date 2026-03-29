@@ -96,6 +96,14 @@ export default function ListaLancamentos() {
   const emAberto = despesas.filter(d => d.status === 'em_aberto');
   const pagas = despesas.filter(d => d.status === 'pago');
 
+  const saldo = indicadores
+   ? (indicadores.receitas?.valor || 0)- (indicadores.pagos?.valor || 0)
+   :0;
+
+  const comprometido = indicadores
+  ? indicadores.em_aberto.valor
+  :0;
+
   return (
     <div className="lista-page">
       <div className="lista-header">
@@ -114,22 +122,43 @@ export default function ListaLancamentos() {
         </button>
       </div>
 
-      {indicadores && (
-        <div className="mini-indicadores">
-          <div className="mini-ind">
-            <span className="mi-label">Total</span>
-            <span className="mi-val">{fmt(indicadores.total_geral.valor)}</span>
-          </div>
-          <div className="mini-ind yellow">
-            <span className="mi-label">Em Aberto</span>
-            <span className="mi-val">{fmt(indicadores.em_aberto.valor)}</span>
-          </div>
-          <div className="mini-ind green">
-            <span className="mi-label">Pagos</span>
-            <span className="mi-val">{fmt(indicadores.pagos.valor)}</span>
-          </div>
-        </div>
-      )}
+     {indicadores && (
+  <>
+    <div className="mini-indicadores">
+      <div
+        className="mini-ind"
+        onClick={() => navigate('/lancamentos')}
+      >
+        <span className="mi-label">Total</span>
+        <span className="mi-val">
+          {fmt(indicadores?.total_geral?.valor || 0)}
+        </span>
+      </div>
+
+      <div
+        className="mini-ind green"
+        onClick={() => navigate('/lancamentos?status=pago')}
+      >
+        <span className="mi-label">Pagos</span>
+        <span className="mi-val">
+          {fmt(indicadores?.pagos?.valor || 0)}
+        </span>
+      </div>
+    </div>
+
+    <div className="mini-indicadores">
+      <div className="mini-ind blue">
+        <span className="mi-label">Saldo</span>
+        <span className="mi-val">{fmt(saldo)}</span>
+      </div>
+
+      <div className="mini-ind red">
+        <span className="mi-label">Comprometido</span>
+        <span className="mi-val">{fmt(comprometido)}</span>
+      </div>
+    </div>
+  </>
+)}
 
       <div className="lista-filtros">
         <FiltroMes

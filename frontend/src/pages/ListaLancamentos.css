@@ -231,6 +231,52 @@
   transition: var(--transition);
 }
 .btn-excluir:hover { filter: brightness(1.1); }
+.resumo-financeiro {
+  display: flex;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.resumo-card {
+  flex: 1;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resumo-card span {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.resumo-card strong {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.resumo-card.saldo {
+  border-top: 2px solid var(--green);
+}
+
+.resumo-card.comprometido {
+  border-top: 2px solid var(--red);
+}
+
+.resumo-card.saldo span {
+  color: var(--green);
+}
+
+.resumo-card.comprometido span {
+  color: var(--red);
+}
 
 @media (max-width: 560px) {
   .mini-indicadores { flex-direction: column; }

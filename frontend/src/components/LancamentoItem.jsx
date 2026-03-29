@@ -10,7 +10,11 @@ export default function LancamentoItem({ despesa, onEditar, onExcluir, onPagar }
   const emAberto = despesa.status === 'em_aberto';
 
   return (
-    <div className={`despesa-item animate-in ${despesa.status}`}>
+   <div 
+  className={`despesa-item animate-in ${despesa.status}`}
+  onClick={() => onEditar(despesa)}
+  style={{ cursor: 'pointer' }}
+>
       <div className="despesa-left">
         <span className={`status-dot ${despesa.status}`} />
         <div className="despesa-info">
@@ -31,29 +35,37 @@ export default function LancamentoItem({ despesa, onEditar, onExcluir, onPagar }
         {emAberto && (
           <div className="despesa-acoes">
 
-            <button
+           <button
               className="btn-acao pagar"
-              onClick={() => onPagar(despesa)}
-              title="Marcar como pago"
-            >
-              💰
-            </button>
+              onClick={(e) => {
+              e.stopPropagation();
+               onPagar(despesa);
+                                }}
+               title="Marcar como pago"
+               >
+                    💰
+               </button>
 
             <button
-              className="btn-acao editar"
-              onClick={() => onEditar(despesa)}
-              title="Editar"
-            >
-              ✏️
-            </button>
-
-            <button
-              className="btn-acao excluir"
-              onClick={() => onExcluir(despesa)}
-              title="Excluir"
-            >
-              🗑️
-            </button>
+               className="btn-acao editar"
+                onClick={(e) => {
+                 e.stopPropagation();
+                  onEditar(despesa);
+                      }}
+                title="Editar"
+             >
+                    ✏️
+                </button>
+              <button
+                    className="btn-acao excluir"
+                          onClick={(e) => {
+                    e.stopPropagation();
+               onExcluir(despesa);
+                                        }}
+                  title="Excluir"
+                 >
+                         🗑️
+                 </button>
           </div>
         )}
       </div>
