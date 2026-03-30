@@ -1,52 +1,66 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getIndicadores } from '../services/api';
-import Modal from '../components/Modal';
-import './Home.css';
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { getIndicadores } from "../services/api";
+import Modal from "../components/Modal";
+import FiltroMes from "../components/FiltroMes";
+import "./Home.css";
 
 const fmt = (v) =>
-  Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export default function Home() {
   const navigate = useNavigate();
   const [indicadores, setIndicadores] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalAberto, setModalAberto] = useState(false);
+  const [mes, setMes] = useState("");
+  const [ano, setAno] = useState(new Date().getFullYear());
 
   const carregarIndicadores = useCallback(async () => {
+    setLoading(true);
     try {
-      const data = await getIndicadores();
+      const params = {};
+      if (mes) params.mes = mes;
+      if (ano) params.ano = ano;
+      const data = await getIndicadores(params);
       setIndicadores(data);
     } catch (e) {
-      console.error('Erro ao carregar indicadores', e);
+      console.error("Erro ao carregar indicadores", e);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [mes, ano]);
 
-  useEffect(() => { carregarIndicadores(); }, [carregarIndicadores]);
+  const handleFiltroChange = ({ mes: novoMes, ano: novoAno }) => {
+    setMes(novoMes);
+    setAno(novoAno);
+  };
+
+  useEffect(() => {
+    carregarIndicadores();
+  }, [carregarIndicadores]);
 
   const cards = [
     {
-      label: 'Total Cadastrado',
+      label: "Total Cadastrado",
       valor: indicadores?.total_geral.valor ?? 0,
       qtd: indicadores?.total_geral.quantidade ?? 0,
-      cor: 'accent',
-      filtro: '',
+      cor: "accent",
+      filtro: "",
     },
     {
-      label: 'Em Aberto',
+      label: "Em Aberto",
       valor: indicadores?.em_aberto.valor ?? 0,
       qtd: indicadores?.em_aberto.quantidade ?? 0,
-      cor: 'yellow',
-      filtro: 'em_aberto',
+      cor: "yellow",
+      filtro: "em_aberto",
     },
     {
-      label: 'Pagos',
+      label: "Pagos",
       valor: indicadores?.pagos.valor ?? 0,
       qtd: indicadores?.pagos.quantidade ?? 0,
-      cor: 'green',
-      filtro: 'pago',
+      cor: "green",
+      filtro: "pago",
     },
   ];
 
@@ -55,7 +69,9 @@ export default function Home() {
       {/* ── Header ── */}
       <header className="home-header">
         <div>
-          <h1 className="home-title">Controle de <span>Gastos</span></h1>
+          <h1 className="home-title">
+            Controle de <span>Gastos</span>
+          </h1>
           <p className="home-sub">Gerencie suas despesas fixas e variáveis</p>
         </div>
         <button className="btn-novo" onClick={() => setModalAberto(true)}>
@@ -63,23 +79,28 @@ export default function Home() {
         </button>
       </header>
 
+      <FiltroMes mes={mes} ano={ano} onChange={handleFiltroChange} />
+
       {/* ── Indicadores ── */}
       <section className="indicadores">
         {loading
-          ? [1, 2, 3].map(i => <div key={i} className="card-skeleton" />)
+          ? [1, 2, 3].map((i) => <div key={i} className="card-skeleton" />)
           : cards.map((c) => (
-            <button
-              key={c.label}
-              className={`indicador-card cor-${c.cor}`}
-              onClick={() => navigate(`/despesas${c.filtro ? `?status=${c.filtro}` : ''}`)}
-            >
-              <span className="ind-label">{c.label}</span>
-              <span className="ind-valor">{fmt(c.valor)}</span>
-              <span className="ind-qtd">{c.qtd} {c.qtd === 1 ? 'despesa' : 'despesas'}</span>
-              <span className="ind-seta">→</span>
-            </button>
-          ))
-        }
+              <button
+                key={c.label}
+                className={`indicador-card cor-${c.cor}`}
+                onClick={() =>
+                  navigate(`/despesas${c.filtro ? `?status=${c.filtro}` : ""}`)
+                }
+              >
+                <span className="ind-label">{c.label}</span>
+                <span className="ind-valor">{fmt(c.valor)}</span>
+                <span className="ind-qtd">
+                  {c.qtd} {c.qtd === 1 ? "despesa" : "despesas"}
+                </span>
+                <span className="ind-seta">→</span>
+              </button>
+            ))}
       </section>
 
       {modalAberto && (
