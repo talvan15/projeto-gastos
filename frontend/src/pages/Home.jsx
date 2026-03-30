@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getIndicadores } from "../services/api";
 import Modal from "../components/Modal";
 import FiltroMes from "../components/FiltroMes";
+import ReceitasSaldo from "../components/ReceitasSaldo";
 import "./Home.css";
 
 const fmt = (v) =>
@@ -68,20 +69,25 @@ export default function Home() {
     <div className="home">
       {/* ── Header ── */}
       <header className="home-header">
-        <div>
+        <div className="home-title-container">
           <h1 className="home-title">
-            Controle de <span>Gastos</span>
+            <span>Controle de Gastos</span>
           </h1>
           <p className="home-sub">Gerencie suas despesas fixas e variáveis</p>
         </div>
+      </header>
+      <div className="btn-container">
         <button className="btn-novo" onClick={() => setModalAberto(true)}>
           <span>+</span> Novo Lançamento
         </button>
-      </header>
+        <div className="filtro-saldo-container">
+          <FiltroMes mes={mes} ano={ano} onChange={handleFiltroChange} />
+        </div>
+      </div>
 
-      <FiltroMes mes={mes} ano={ano} onChange={handleFiltroChange} />
-
+      <ReceitasSaldo indicadores={indicadores} loading={loading} />
       {/* ── Indicadores ── */}
+      <span>Despesas</span>
       <section className="indicadores">
         {loading
           ? [1, 2, 3].map((i) => <div key={i} className="card-skeleton" />)
