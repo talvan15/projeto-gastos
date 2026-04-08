@@ -102,7 +102,7 @@ export default function ListaLancamentos() {
 
   const comprometido = indicadores
   ? indicadores.em_aberto.valor
-  :0;
+  :0; 
 
   return (
     <div className="lista-page">
